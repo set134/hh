@@ -749,12 +749,14 @@
                     </div>
 
                     <div class="filters">
-                        <button class="filter-btn active">Todos</button>
-                        <button class="filter-btn">Camisetas</button>
-                        <button class="filter-btn">Shorts</button>
-                        <button class="filter-btn">Sudaderas</button>
-                        <button class="filter-btn">Calzado</button>
-                        <button class="filter-btn">Accesorios</button>
+                        <button class="filter-btn active" data-category="all" onclick="filterProducts('men', 'all')">Todos</button>
+                        <button class="filter-btn" data-category="Camisetas" onclick="filterProducts('men', 'Camisetas')">Camisetas</button>
+                        <button class="filter-btn" data-category="Shorts" onclick="filterProducts('men', 'Shorts')">Shorts</button>
+                        <button class="filter-btn" data-category="Sudaderas" onclick="filterProducts('men', 'Sudaderas')">Sudaderas</button>
+                        <button class="filter-btn" data-category="Chaquetas" onclick="filterProducts('men', 'Chaquetas')">Chaquetas</button>
+                        <button class="filter-btn" data-category="Pantalones" onclick="filterProducts('men', 'Pantalones')">Pantalones</button>
+                        <button class="filter-btn" data-category="Calzado" onclick="filterProducts('men', 'Calzado')">Calzado</button>
+                        <button class="filter-btn" data-category="Accesorios" onclick="filterProducts('men', 'Accesorios')">Accesorios</button>
                     </div>
 
                     <div class="products-grid" id="menProducts">
@@ -774,12 +776,14 @@
                     </div>
 
                     <div class="filters">
-                        <button class="filter-btn active">Todos</button>
-                        <button class="filter-btn">Tops</button>
-                        <button class="filter-btn">Leggings</button>
-                        <button class="filter-btn">Camisetas</button>
-                        <button class="filter-btn">Calzado</button>
-                        <button class="filter-btn">Accesorios</button>
+                        <button class="filter-btn active" data-category="all" onclick="filterProducts('women', 'all')">Todos</button>
+                        <button class="filter-btn" data-category="Tops" onclick="filterProducts('women', 'Tops')">Tops</button>
+                        <button class="filter-btn" data-category="Leggings" onclick="filterProducts('women', 'Leggings')">Leggings</button>
+                        <button class="filter-btn" data-category="Camisetas" onclick="filterProducts('women', 'Camisetas')">Camisetas</button>
+                        <button class="filter-btn" data-category="Shorts" onclick="filterProducts('women', 'Shorts')">Shorts</button>
+                        <button class="filter-btn" data-category="Chaquetas" onclick="filterProducts('women', 'Chaquetas')">Chaquetas</button>
+                        <button class="filter-btn" data-category="Calzado" onclick="filterProducts('women', 'Calzado')">Calzado</button>
+                        <button class="filter-btn" data-category="Accesorios" onclick="filterProducts('women', 'Accesorios')">Accesorios</button>
                     </div>
 
                     <div class="products-grid" id="womenProducts">
@@ -935,6 +939,8 @@
         let currentUser = null;
         let cart = [];
         let currentPage = 'home';
+        let currentMenFilter = 'all';
+        let currentWomenFilter = 'all';
 
         // Products data
         const menProducts = [
@@ -945,7 +951,11 @@
             { id: 5, name: "Chaqueta Windrunner", category: "Chaquetas", price: 249900 },
             { id: 6, name: "Pantalón Entrenamiento", category: "Pantalones", price: 159900 },
             { id: 7, name: "Calcetines Elite", category: "Accesorios", price: 39900 },
-            { id: 8, name: "Gorra Dri-FIT", category: "Accesorios", price: 69900 }
+            { id: 8, name: "Gorra Dri-FIT", category: "Accesorios", price: 69900 },
+            { id: 9, name: "Camiseta Básica", category: "Camisetas", price: 59900 },
+            { id: 10, name: "Shorts Deportivos", category: "Shorts", price: 69900 },
+            { id: 11, name: "Chaqueta Deportiva", category: "Chaquetas", price: 189900 },
+            { id: 12, name: "Pantalón Jogger", category: "Pantalones", price: 129900 }
         ];
 
         const womenProducts = [
@@ -956,7 +966,11 @@
             { id: 105, name: "Shorts Running", category: "Shorts", price: 79900 },
             { id: 106, name: "Chaqueta Ligera", category: "Chaquetas", price: 199900 },
             { id: 107, name: "Calcetines Pack x3", category: "Accesorios", price: 49900 },
-            { id: 108, name: "Bolsa Gym", category: "Accesorios", price: 119900 }
+            { id: 108, name: "Bolsa Gym", category: "Accesorios", price: 119900 },
+            { id: 109, name: "Shorts Deportivos", category: "Shorts", price: 69900 },
+            { id: 110, name: "Chaqueta Térmica", category: "Chaquetas", price: 229900 },
+            { id: 111, name: "Top Básico", category: "Tops", price: 79900 },
+            { id: 112, name: "Leggings Estampados", category: "Leggings", price: 149900 }
         ];
 
         // Navigation
@@ -977,12 +991,12 @@
                 case 'men':
                     document.getElementById('menPage').classList.remove('hidden');
                     document.querySelector('[onclick="showPage(\'men\')"]').classList.add('active');
-                    loadProducts('men');
+                    loadProducts('men', currentMenFilter);
                     break;
                 case 'women':
                     document.getElementById('womenPage').classList.remove('hidden');
                     document.querySelector('[onclick="showPage(\'women\')"]').classList.add('active');
-                    loadProducts('women');
+                    loadProducts('women', currentWomenFilter);
                     break;
                 case 'cart':
                     document.getElementById('cartPage').classList.remove('hidden');
@@ -991,12 +1005,40 @@
             }
         }
 
+        // Filter products
+        function filterProducts(category, filter) {
+            // Update active filter button
+            const filterButtons = document.querySelectorAll(`#${category}Page .filter-btn`);
+            filterButtons.forEach(btn => {
+                if (btn.dataset.category === filter) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update current filter
+            if (category === 'men') {
+                currentMenFilter = filter;
+            } else {
+                currentWomenFilter = filter;
+            }
+
+            // Load filtered products
+            loadProducts(category, filter);
+        }
+
         // Load products
-        function loadProducts(category) {
+        function loadProducts(category, filter = 'all') {
             const products = category === 'men' ? menProducts : womenProducts;
             const container = document.getElementById(category + 'Products');
             
-            container.innerHTML = products.map(product => `
+            // Filter products
+            const filteredProducts = filter === 'all' 
+                ? products 
+                : products.filter(product => product.category === filter);
+            
+            container.innerHTML = filteredProducts.map(product => `
                 <div class="product-card">
                     <div class="product-image">${product.name}</div>
                     <div class="product-info">
@@ -1009,6 +1051,16 @@
                     </div>
                 </div>
             `).join('');
+
+            // Show message if no products found
+            if (filteredProducts.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                        <h3>No se encontraron productos en esta categoría</h3>
+                        <button class="btn btn-primary mt-4" onclick="filterProducts('${category}', 'all')">Ver todos los productos</button>
+                    </div>
+                `;
+            }
         }
 
         // Cart functions
@@ -1212,18 +1264,6 @@
         document.getElementById('authModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeAuthModal();
-            }
-        });
-
-        // Filter functionality
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('filter-btn')) {
-                // Remove active class from all filter buttons
-                e.target.parentElement.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                // Add active class to clicked button
-                e.target.classList.add('active');
             }
         });
 
